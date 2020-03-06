@@ -1,14 +1,16 @@
+from flask_marshmallow import Marshmallow, Schema
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-db = SQLAlchemy()
+from marshmallow import fields
 
+db = SQLAlchemy()
+ma = Marshmallow()
 
 class TimestampMixin(object):
     created_at = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-
 
 class User(TimestampMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,6 +20,14 @@ class User(TimestampMixin, db.Model):
     def __init__(self, email):
         self.email = email
 
+class UserSchema(ma.Schema):
+    id = fields.Integer(dump_only=True)
+    email = fields.Email()
+    created_at = fields.DateTime()
+    updated_at = fields.DateTime()
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
 class Location(TimestampMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
