@@ -17,6 +17,7 @@ class TimestampMixin(object):
 class User(TimestampMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
     locations = db.relationship('Location', backref='user', lazy=True)
 
     def __init__(self, email):
@@ -25,6 +26,7 @@ class User(TimestampMixin, db.Model):
 
 class UserSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
+    password = fields.Str(required=True, load_only=True)
     email = fields.Email()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
